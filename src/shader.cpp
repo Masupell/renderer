@@ -73,18 +73,31 @@ unsigned int Shader::getID()
 
 void Shader::setInt(const char* name, int value)
 {
-    glUniform1i(glGetUniformLocation(ID, name), value);
+    glUniform1i(getUniformLocation(name), value);
 }
 
 void Shader::setFloat(const char* name, float value)
 {
-    glUniform1f(glGetUniformLocation(ID, name), value);
+    glUniform1f(getUniformLocation(name), value);
 }
 
 // Not safe, but temporar anyways
 void Shader::setmatrix4fv(const char* name, const float* value)
 {
-    glUniformMatrix4fv(glGetUniformLocation(ID, name), 1, GL_FALSE, value);
+    glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, value);
+}
+
+int Shader::getUniformLocation(const char* name)
+{
+    std::string key(name);
+
+    auto it = uniformCache.find(key);
+    if (it != uniformCache.end()) { return it->second; }
+
+    int location = glGetUniformLocation(ID, name);
+    uniformCache[key] = location;
+
+    return location;
 }
 
 void check_shader_compilation(unsigned int shader)
