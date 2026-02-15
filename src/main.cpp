@@ -5,22 +5,11 @@
 
 #include <fstream>
 #include <sstream>
+#include <shader.hpp>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
-}
-
-void check_shader_compilation(unsigned int shader)
-{
-    int success;
-    char infoLog[512];
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(shader, 512, NULL, infoLog);
-        std::cout << "Shader Compilation Failed:\n" << infoLog << std::endl;
-    }
 }
 
 int main()
@@ -79,67 +68,15 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    std::string vertexCode;
-    std::string fragmentCode;
-    std::ifstream vertexShaderFile;
-    std::ifstream fragmentShaderFile;
-    try
-    {
-        vertexShaderFile.open("src/shader/vertex.vs");
-        fragmentShaderFile.open("src/shader/fragment.fs");
-        std::stringstream vertexShaderStream, fragmentShaderStream;
-
-        vertexShaderStream << vertexShaderFile.rdbuf();
-        fragmentShaderStream << fragmentShaderFile.rdbuf();
-
-        vertexShaderFile.close();
-        fragmentShaderFile.close();
-
-        vertexCode = vertexShaderStream.str();
-        fragmentCode = fragmentShaderStream.str();
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << e.what() << '\n';
-    }
-    const char* vertexShaderSource = vertexCode.c_str();
-    const char* fragmentShaderSource = fragmentCode.c_str();
-
-    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);    
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-    check_shader_compilation(vertexShader);
-
-    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-    check_shader_compilation(fragmentShader);
-
-    unsigned int shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-    {
-        int success;
-        char infoLog[512];
-        glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-        if (!success)
-        {
-            glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-            std::cout << "Shader Linking Failed:\n" << infoLog << std::endl;
-        }
-    }
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    Shader shader("src/shader/vertex.vs", "src/shader/fragment.fs");
     
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
     glEnableVertexAttribArray(1);
     
-    glUseProgram(shaderProgram); // Won't change for now
-    unsigned int projectionPos = glGetUniformLocation(shaderProgram, "projection");
-    glUniformMatrix4fv(projectionPos, 1, GL_FALSE, projection);
+    shader.use(); // Won't change for now
+    shader.setmatrix4fv("projection", projection);
 
 
     while (!glfwWindowShouldClose(window))
