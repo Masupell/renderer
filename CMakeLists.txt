@@ -12,12 +12,14 @@ add_executable(renderer
     src/main.cpp
     src/shader.cpp
     src/window.cpp
+    src/stb_image.cpp
     extern/glad/src/glad.c
 )
 
 target_include_directories(renderer PRIVATE 
     include
-    extern/glad/include    
+    extern/glad/include
+    extern/stb
 )
 
 target_link_libraries(renderer PRIVATE
