@@ -11,6 +11,7 @@ find_package(glfw3 REQUIRED)
 add_executable(renderer
     src/main.cpp
     src/shader.cpp
+    src/window.cpp
     extern/glad/src/glad.c
 )
 
