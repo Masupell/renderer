@@ -139,5 +139,9 @@ int main()
         input.endFrame();
     }
 
+    // without one more pollevent, it gives me segfault on wayland
+    glfwPollEvents();
+    glfwTerminate();
+
     return 0;
 }

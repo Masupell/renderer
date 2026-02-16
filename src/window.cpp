@@ -11,13 +11,6 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
 
 Window::Window(int width, int height, const char* title) : width(width), height(height), title(title), windowedWidth(width), windowedHeight(height)
 {
-    #ifdef __linux__
-        if (std::getenv("WAYLAND_DISPLAY")) // Segmentation fault for some reason when exiting windows on wayland
-        {
-            glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
-        }
-    #endif
-
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -49,7 +42,7 @@ Window::Window(int width, int height, const char* title) : width(width), height(
 Window::~Window()
 {
     glfwDestroyWindow(window);
-    glfwTerminate();
+    window = nullptr;
 }
 
 bool Window::shouldClose() const
