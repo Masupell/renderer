@@ -1,5 +1,8 @@
 #pragma once
 
+#include <functional>
+#include <string>
+
 struct GLFWwindow;
 
 class Window
@@ -13,11 +16,18 @@ class Window
         void pollEvents();
         void swapBuffer();
 
-        int getWidth() const;
-        int getHeight() const;
+        float getWidth() const;
+        float getHeight() const;
+
+        void setResizeCallback(std::function<void(int, int)> callback);
 
     private:
-        GLFWwindow* window;
+        GLFWwindow* window; 
         int width;
         int height;
+
+        std::function<void(int, int)> resizeCallback;
+        void updateSize(int newWidth, int newHeight);
+
+        friend void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 };

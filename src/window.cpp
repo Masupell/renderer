@@ -4,7 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
-static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 Window::Window(int width, int height, const char* title) : width(width), height(height)
 {
@@ -33,6 +33,7 @@ Window::Window(int width, int height, const char* title) : width(width), height(
         std::cout << "Fialed to initialize Glad\n";
         glfwTerminate();
     }
+    glfwSetWindowUserPointer(window, this);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     glEnable(GL_BLEND);
@@ -60,17 +61,39 @@ void Window::swapBuffer()
     glfwSwapBuffers(window);
 }
 
-int Window::getWidth() const
+float Window::getWidth() const
 {
-    return width;
+    return (float)width;
 }
 
-int Window::getHeight() const
+float Window::getHeight() const
 {
-    return height;
+    return (float)height;
 }
 
-static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void Window::setResizeCallback(std::function<void(int, int)> callback)
+{
+    resizeCallback = callback;
+}
+
+void Window::updateSize(int newWidth, int newHeight)
+{
+    width = newWidth;
+    height = newHeight;
+
+    if (resizeCallback)
+    {
+        resizeCallback(width, height);
+    }
+}
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
+
+    Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+    if (win)
+    {
+        win->updateSize(width, height);
+    }
 }

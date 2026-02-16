@@ -19,7 +19,7 @@ add_executable(renderer
 target_include_directories(renderer PRIVATE 
     include
     extern/glad/include
-    extern/stb
+    extern
 )
 
 target_link_libraries(renderer PRIVATE

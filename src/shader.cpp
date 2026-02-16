@@ -5,6 +5,8 @@
 #include <fstream>
 #include <sstream>
 
+#include <glm/gtc/type_ptr.hpp>
+
 void check_shader_compilation(unsigned int shader);
 void check_linking_compilation(unsigned int shaderProgram);
 
@@ -81,10 +83,9 @@ void Shader::setFloat(const char* name, float value)
     glUniform1f(getUniformLocation(name), value);
 }
 
-// Not safe, but temporar anyways
-void Shader::setmatrix4fv(const char* name, const float* value)
+void Shader::setmatrix4fv(const char* name, const glm::mat4& value)
 {
-    glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, value);
+    glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value));
 }
 
 int Shader::getUniformLocation(const char* name)
