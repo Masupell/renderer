@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <string>
+#include "input.hpp"
 
 struct GLFWwindow;
 
@@ -31,6 +32,8 @@ class Window
 
         void setResizeCallback(std::function<void(int, int)> callback);
 
+        Input& getInput();
+
     private:
         GLFWwindow* window; 
         int width;
@@ -45,6 +48,11 @@ class Window
 
         double currentFPS = 0;
         bool showFPS = false;
+
+        Input input;
+        friend void key_callback(GLFWwindow*, int key, int scancode, int action, int mods);
+        friend void mouse_button_callback(GLFWwindow*, int button, int action, int mods);
+        friend void cursor_position_callback(GLFWwindow*, double xPos, double yPos);
 
         std::function<void(int, int)> resizeCallback;
         void updateSize(int newWidth, int newHeight);

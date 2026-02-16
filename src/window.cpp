@@ -5,6 +5,9 @@
 #include <iostream>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
+void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
 
 Window::Window(int width, int height, const char* title) : width(width), height(height), title(title), windowedWidth(width), windowedHeight(height)
 {
@@ -35,6 +38,9 @@ Window::Window(int width, int height, const char* title) : width(width), height(
     }
     glfwSetWindowUserPointer(window, this);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetKeyCallback(window, key_callback);
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
+    glfwSetCursorPosCallback(window, cursor_position_callback);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -105,16 +111,15 @@ void Window::setVSync(bool enable)
 
 void Window::toggleFullScreen()
 {
-    fullscreen = !fullscreen;
-    setFullScreen(fullscreen);
+    // fullscreen = !fullscreen;
+    setFullScreen(!fullscreen);
 }
 
 void Window::setFullScreen(bool fs)
 {
     if (fs == fullscreen) return;
-    fullscreen = fs;
 
-    if (fullscreen)
+    if (fs)
     {
         glfwGetWindowPos(window, &windowedPosX, &windowedPosY);
         glfwGetWindowSize(window, &windowedWidth, &windowedHeight);
@@ -134,6 +139,8 @@ void Window::setFullScreen(bool fs)
         width = windowedWidth;
         height = windowedHeight;
     }
+
+    fullscreen = fs;
 
     if (resizeCallback)
     {
@@ -169,6 +176,38 @@ void Window::updateSize(int newWidth, int newHeight)
     if (resizeCallback)
     {
         resizeCallback(width, height);
+    }
+}
+
+Input& Window::getInput()
+{
+    return input;
+}
+
+void key_callback(GLFWwindow* glfwWindow, int key, int scancode, int action, int mods)
+{
+    Window* win = static_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
+    if (win)
+    {
+        win->input.updateKeyState(key, action);
+    }
+}
+
+void mouse_button_callback(GLFWwindow* glfwWindow, int button, int action, int mods)
+{
+    Window* win = static_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
+    if (win)
+    {
+        win->input.updateMouseButtonState(button, action);
+    }
+}
+
+void cursor_position_callback(GLFWwindow* glfwWindow, double xpos, double ypos)
+{
+    Window* win = static_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
+    if (win)
+    {
+        win->input.updateMousePosition(xpos, ypos);
     }
 }
 

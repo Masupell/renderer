@@ -14,6 +14,7 @@
 int main()
 {
     Window window(1280, 720, "Window");
+    Input& input = window.getInput();
 
     float vertices[] =
     {
@@ -94,8 +95,35 @@ int main()
 
     while (!window.shouldClose())
     {
+        window.pollEvents();
         glClearColor(0.0, 0.0, 0.2, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        if (input.isKeyPressed(GLFW_KEY_F11))
+        {
+            std::cout << "Toggle?\n";
+            window.toggleFullScreen();
+        }
+
+        if (input.isKeyPressed(GLFW_KEY_LEFT_BRACKET))
+        {
+            window.setFullScreen(true);
+        }
+        if (input.isKeyPressed(GLFW_KEY_RIGHT_BRACKET))
+        {
+            window.setFullScreen(false);
+        }
+
+        if (input.isKeyPressed(GLFW_KEY_W))
+        {
+            std::cout << "W is pressed!\n";
+        }
+        if (input.isKeyReleased(GLFW_KEY_S))
+        {
+            std::cout << "S is released!\n";
+        }
+
+
 
         // glDrawArrays(GL_TRIANGLES, 0, 3);
         glm::mat4 model = glm::mat4(1.0f);
@@ -105,8 +133,10 @@ int main()
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         window.updateFPS();
-        window.pollEvents();
+        // window.pollEvents();
         window.swapBuffer();
+
+        input.endFrame();
     }
 
     return 0;

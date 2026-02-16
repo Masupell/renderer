@@ -13,6 +13,7 @@ add_executable(renderer
     src/shader.cpp
     src/window.cpp
     src/stb_image.cpp
+    src/input.cpp
     extern/glad/src/glad.c
 )
 
