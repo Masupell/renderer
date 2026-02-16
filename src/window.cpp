@@ -6,7 +6,7 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
-Window::Window(int width, int height, const char* title) : width(width), height(height), title(title)
+Window::Window(int width, int height, const char* title) : width(width), height(height), title(title), windowedWidth(width), windowedHeight(height)
 {
     #ifdef __linux__
         if (std::getenv("WAYLAND_DISPLAY")) // Segmentation fault for some reason when exiting windows on wayland
@@ -101,6 +101,49 @@ void Window::showFPSInTitle(bool show)
 void Window::setVSync(bool enable)
 {
     glfwSwapInterval(enable ? 1 : 0);
+}
+
+void Window::toggleFullScreen()
+{
+    fullscreen = !fullscreen;
+    setFullScreen(fullscreen);
+}
+
+void Window::setFullScreen(bool fs)
+{
+    if (fs == fullscreen) return;
+    fullscreen = fs;
+
+    if (fullscreen)
+    {
+        glfwGetWindowPos(window, &windowedPosX, &windowedPosY);
+        glfwGetWindowSize(window, &windowedWidth, &windowedHeight);
+
+        GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+        // Sets it to fullscreen
+        glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+
+        width = mode->width;
+        height = mode->height;
+    }
+    else
+    {
+        glfwSetWindowMonitor(window, nullptr, windowedPosX, windowedPosY, windowedWidth, windowedHeight, 0);
+        width = windowedWidth;
+        height = windowedHeight;
+    }
+
+    if (resizeCallback)
+    {
+        resizeCallback(width, height);
+    }
+}
+
+bool Window::isFullScreen() const
+{
+    return fullscreen;
 }
 
 float Window::getWidth() const

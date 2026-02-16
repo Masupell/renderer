@@ -19,6 +19,10 @@ class Window
         void updateFPS();
         double getFPS() const;
 
+        void toggleFullScreen();
+        void setFullScreen(bool fullscreen);
+        bool isFullScreen() const;
+
         void setVSync(bool enable);
         void showFPSInTitle(bool show);
 
@@ -32,6 +36,12 @@ class Window
         int width;
         int height;
         std::string title;
+
+        bool fullscreen;
+        int windowedWidth;
+        int windowedHeight;
+        int windowedPosX;
+        int windowedPosY;
 
         double currentFPS = 0;
         bool showFPS = false;
