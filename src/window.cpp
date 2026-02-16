@@ -98,6 +98,11 @@ void Window::showFPSInTitle(bool show)
     }
 }
 
+void Window::setVSync(bool enable)
+{
+    glfwSwapInterval(enable ? 1 : 0);
+}
+
 float Window::getWidth() const
 {
     return (float)width;

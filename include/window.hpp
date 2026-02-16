@@ -19,6 +19,7 @@ class Window
         void updateFPS();
         double getFPS() const;
 
+        void setVSync(bool enable);
         void showFPSInTitle(bool show);
 
         float getWidth() const;
