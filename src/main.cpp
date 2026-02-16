@@ -90,6 +90,8 @@ int main()
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), window.getWidth()/window.getHeight(), 0.1f, 100.0f);
     shader.setmatrix4fv("projection", projection);
 
+    window.showFPSInTitle(true);
+
     while (!window.shouldClose())
     {
         glClearColor(0.0, 0.0, 0.2, 1.0);
@@ -101,7 +103,8 @@ int main()
         model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0, 0.0, 1.0));
         shader.setmatrix4fv("model", model);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        
+
+        window.updateFPS();
         window.pollEvents();
         window.swapBuffer();
     }

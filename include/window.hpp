@@ -16,6 +16,11 @@ class Window
         void pollEvents();
         void swapBuffer();
 
+        void updateFPS();
+        double getFPS() const;
+
+        void showFPSInTitle(bool show);
+
         float getWidth() const;
         float getHeight() const;
 
@@ -25,6 +30,10 @@ class Window
         GLFWwindow* window; 
         int width;
         int height;
+        std::string title;
+
+        double currentFPS = 0;
+        bool showFPS = false;
 
         std::function<void(int, int)> resizeCallback;
         void updateSize(int newWidth, int newHeight);

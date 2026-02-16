@@ -6,7 +6,7 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
-Window::Window(int width, int height, const char* title) : width(width), height(height)
+Window::Window(int width, int height, const char* title) : width(width), height(height), title(title)
 {
     #ifdef __linux__
         if (std::getenv("WAYLAND_DISPLAY")) // Segmentation fault for some reason when exiting windows on wayland
@@ -59,6 +59,43 @@ void Window::pollEvents()
 void Window::swapBuffer()
 {
     glfwSwapBuffers(window);
+}
+
+void Window::updateFPS()
+{
+    static double lastTime = glfwGetTime();
+    static int frameCount = 0;
+    
+    double currentTime = glfwGetTime();
+    frameCount++;
+    
+    if (currentTime - lastTime >= 1.0)
+    {
+        currentFPS = frameCount / (currentTime - lastTime);
+        
+        if (showFPS)
+        {
+            std::string newTitle = title + " - FPS: " + std::to_string((int)currentFPS);
+            glfwSetWindowTitle(window, newTitle.c_str());
+        }
+        
+        frameCount = 0;
+        lastTime = currentTime;
+    }
+}
+
+double Window::getFPS() const
+{
+    return currentFPS;
+}
+
+void Window::showFPSInTitle(bool show)
+{
+    showFPS = show;
+    if (!show)
+    {
+        glfwSetWindowTitle(window, title.c_str());
+    }
 }
 
 float Window::getWidth() const
