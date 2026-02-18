@@ -15,7 +15,6 @@ class Shader
         unsigned int getID();
         void setInt(const char* name, int value);
         void setFloat(const char* name, float value);
-        // Not safe
         void setmatrix4fv(const char* name, const glm::mat4& value);
         int getUniformLocation(const char* name);
     
